@@ -1,0 +1,78 @@
+<?xml version ='1.0' encoding ='UTF-8' ?>
+<definitions name='BankTransaction'
+             targetNamespace='http://example.org/StockQuote'
+             xmlns:tns=' http://example.org/StockQuote '
+             xmlns:soap='http://schemas.xmlsoap.org/wsdl/soap/'
+             xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+             xmlns:soapenc='http://schemas.xmlsoap.org/soap/encoding/'
+             xmlns:wsdl='http://schemas.xmlsoap.org/wsdl/'
+             xmlns='http://schemas.xmlsoap.org/wsdl/'>
+
+    <types>
+        <xs:schema elementFormDefault="qualified"
+                   xmlns:tns="http://schemas.xmlsoap.org/wsdl/"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   targetNamespace="http://webserver/">
+
+            <xs:complexType name="Transaction">
+                <xs:sequence>
+                    <xs:element name="authtoken" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="usercard" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="storecard" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="cost" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="Request">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="transaction" type="Transaction" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Response">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="status" type="xs:string" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </types>
+
+    <message name='transactionRequest'>
+        <part name='Request' type='tns:Request'/>
+    </message>
+    <message name='transactionResponse'>
+        <part name='Response' type='tns:Response'/>
+    </message>
+
+    <portType name='BankTransactionPortType'>
+        <operation name='transaction'>
+            <input message='tns:transactionRequest'/>
+            <output message='tns:transactionResponse'/>
+        </operation>
+    </portType>
+
+    <binding name='BankTransactionBinding' type='tns:BankTransactionPortType'>
+        <soap:binding style='rpc'
+                      transport='http://schemas.xmlsoap.org/soap/http'/>
+        <operation name='transaction'>
+            <soap:operation soapAction='urn:xmethods-delayed-quotes#getQuote'/>
+            <input>
+                <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                           encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </input>
+            <output>
+                <soap:body use='encoded' namespace='urn:xmethods-delayed-quotes'
+                           encodingStyle='http://schemas.xmlsoap.org/soap/encoding/'/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name='BankTransactionService'>
+        <port name='BankTransactionPort' binding='BankTransactionBinding'>
+            <soap:address location='http://webserver/'/>
+        </port>
+    </service>
+</definitions>
